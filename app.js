@@ -1,6 +1,7 @@
 import express from "express";
 import { config } from "dotenv";
 import mongoose from "mongoose";
+import cors  from "cors";
 import { blogsController } from "./controller/blogsController.js";
 import { authController } from "./controller/authController.js";
 
@@ -11,6 +12,7 @@ const port = process.env.PORT || 3000;
 mongoose.connect(process.env.DB_URL, () => {
   console.log("connected to db");
 });
+app.use(cors());
 app.use(express.json());
 app.use("/api/v1/blogs", blogsController);
 app.use("/api/v1/auth", authController);
