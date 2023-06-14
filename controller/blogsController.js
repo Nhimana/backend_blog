@@ -1,6 +1,7 @@
 import express from "express";
 import { Blog } from "../db/blogSchema.js";
 import { protectRoute } from "../middleware/secureRoute.js";
+import { vars } from "../config/vars.js";
 const router = express.Router();
 
 router
@@ -14,7 +15,7 @@ router
     }
   })
   .post(protectRoute, async (req, res) => {
-    if (!(req.user.email === process.env.ADMIN_EMAIL))
+    if (!(req.user.email === vars.ADMIN_EMAIL))
       return res.status(401).json({ message: "only admin can post a blog" });
     const { title, body, image, subTitle } = req.body;
     const blog = await Blog.create({ title, body, image, subTitle });
@@ -28,7 +29,7 @@ router
     res.send(blog);
   })
   .put(protectRoute, async (req, res) => {
-    if (!(req.user.email === process.env.ADMIN_EMAIL))
+    if (!(req.user.email === vars.ADMIN_EMAIL))
       return res.status(401).json({ message: "only admin can update a blog" });
     const { title, body, subTitle, image } = req.body;
     const updates = {};
@@ -40,7 +41,7 @@ router
     res.send(blog);
   })
   .delete(protectRoute, async (req, res) => {
-    if (!(req.user.email === process.env.ADMIN_EMAIL))
+    if (!(req.user.email === vars.ADMIN_EMAIL))
       return res.status(401).json({ message: "only admin can delete a blog" });
     const blog = await Blog.findByIdAndDelete(req.params.id);
     res.send(blog);
