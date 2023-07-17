@@ -19,7 +19,7 @@ dependencies:
     version: 9.0.1
   mongoose:
     specifier: ^7.3.1
-    version: 7.3.2
+    version: 7.3.4
 
 devDependencies:
   '@types/bcrypt':
@@ -803,8 +803,8 @@ packages:
       saslprep: 1.0.3
     dev: false
 
-  /mongoose@7.3.2:
-    resolution: {integrity: sha512-Z86m5ASwYYFyT++wPQTtuTl5Jh052w6G1IM8LxPu/6iuqxQo6nUOaEoGZfMy0ovw3Dyw3415Jue3pYXkRqPkfA==}
+  /mongoose@7.3.4:
+    resolution: {integrity: sha512-luvv4PKFiFYaHNn5wGIRrMML3Vvoa8lkdhcLE1S/6gY9s9CUOdEu9olbDrkhvnwRQ20j1SrQFO5JEApW0xwL3w==}
     engines: {node: '>=14.20.1'}
     dependencies:
       bson: 5.3.0
