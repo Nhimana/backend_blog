@@ -1,0 +1,30 @@
+services:
+  api:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - db
+    ports:
+      - 3000:3000
+    env_file:
+      - .env
+    container_name: app
+
+  db:
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mongo
+      MONGO_INITDB_ROOT_PASSWORD: secretpwd
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - blog-api
+
+networks:
+  blog-api:
+    driver: bridge
+volumes:
+  mongo_data:
+    driver: local

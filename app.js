@@ -9,10 +9,14 @@ import { vars } from "./config/vars.js";
 const app = express();
 if (process.env.NODE_ENV !== "production") config();
 const port = process.env.PORT || 3000;
-
-mongoose.connect(vars.DB_URL, () => {
-  console.log("connected to db");
-});
+const connectDb = async () => {
+  try {
+    await mongoose.connect(vars.DB_URL);
+  } catch (error) {
+    console.error(error)
+  }
+}
+connectDb().then(()=>console.log('db connected'))
 app.use(cors());
 app.use(express.json());
 app.use("/api/v1/blogs", blogsController);
