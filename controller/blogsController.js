@@ -10,7 +10,7 @@ import { Blog } from "../db/blogSchema.js";
 export async function getAllBlogsController(_, res) {
   try {
     const blogs = await Blog.find();
-    res.send(blogs);
+    res.json({ data: blogs });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -31,10 +31,15 @@ export async function createBlogController(req, res) {
     subTitle: Joi.string()
   })
 
+  const userSchema = Joi.object({
+    user: Joi.object({ email: Joi.string().email().required() })
+  })
+
   const { error, value, warning } = schema.validate(req.body)
   if (error)
     return res.status(400).json(error)
   if (warning) res.status(400).json(warning)
+
   try {
     if (!(req.user.email === process.env.ADMIN_EMAIL))
       return res.status(401).json({ message: "only admin can post a blog" });
@@ -56,8 +61,14 @@ export async function createBlogController(req, res) {
  */
 
 export async function getBlogController(req, res) {
-  const blog = await Blog.findById(req.params.id);
-  res.send(blog);
+  try {
+    const blog = await Blog.findById(req.params.id);
+    res.json({ data: blog });
+
+  } catch (error) {
+    res.status(500).json({ error })
+
+  }
 }
 
 /**
@@ -67,11 +78,20 @@ export async function getBlogController(req, res) {
  * @returns 
  */
 export async function deleteBlogController(req, res) {
-  if (!(req.user.email === process.env.ADMIN_EMAIL))
-    return res.status(401).json({ message: "only admin can delete a blog" });
-  const blog = await Blog.findByIdAndDelete(req.params.id);
-  res.send(blog);
+  try {
+
+    if (!(req.user.email === process.env.ADMIN_EMAIL))
+      return res.status(401).json({ message: "only admin can delete a blog" });
+
+    const blog = await Blog.findByIdAndDelete(req.params.id);
+    res.json({ data: blog });
+  } catch (error) {
+    res.status(500).json({ error })
+
+  }
 }
+
+
 
 /**
  * 
@@ -80,15 +100,21 @@ export async function deleteBlogController(req, res) {
  * @returns 
  */
 export async function updateBlogController(req, res) {
-  if (!(req.user.email === process.env.ADMIN_EMAIL))
-    return res.status(401).json({ message: "only admin can update a blog" });
-  const { title, body, subTitle, image } = req.body;
-  const updates = {};
-  if (title) updates.title = title;
-  if (body) updates.body = body;
-  if (subTitle) updates.subTitle = subTitle;
-  if (image) updates.image = image;
-  const blog = await Blog.findByIdAndUpdate(req.params.id, updates);
-  res.send(blog);
+  try {
+    if (!(req.user.email === process.env.ADMIN_EMAIL))
+      return res.status(401).json({ message: "only admin can update a blog" });
+    const { title, body, subTitle, image } = req.body;
+    const updates = {};
+    if (title) updates.title = title;
+    if (body) updates.body = body;
+    if (subTitle) updates.subTitle = subTitle;
+    if (image) updates.image = image;
+    const blog = await Blog.findByIdAndUpdate(req.params.id, updates);
+    res.send(blog);
+    
+  } catch (error) {
+    res.status(500).json({ error })
+    
+  }
 }
 

@@ -1,25 +1,26 @@
 import express from "express";
 import { config } from "dotenv";
-import mongoose from "mongoose";
+import { connect } from "mongoose";
 import cors from "cors";
-import { blogsController } from "./controller/blogsController.js";
-import { authController } from "./controller/authController.js";
-import { vars } from "./config/vars.js";
+import { blogsRoutes } from "./routes/blogRoutes.js";
+import { authRoutes } from "./routes/authRoutes.js";
 
 const app = express();
-if (process.env.NODE_ENV !== "production") config();
-const port = process.env.PORT || 3000;
-const connectDb = async () => {
-  try {
-    await mongoose.connect(vars.DB_URL);
-  } catch (error) {
-    console.error(error)
-  }
+if (process.env.NODE_ENV !== "production") {
+  config();
+  app.use((req, _, next) => {
+    console.log(req.path);
+    next()
+  })
 }
-connectDb().then(()=>console.log('db connected'))
+const port = process.env.PORT || 3000;
+
 app.use(cors());
 app.use(express.json());
-app.use("/api/v1/blogs", blogsController);
-app.use("/api/v1/auth", authController);
+app.use("/api/v1/blogs", blogsRoutes);
+app.use("/api/v1/auth", authRoutes);
 app.use((req, res) => res.status(404).json({ message: "route not found" }));
-app.listen(port, () => console.log(`server started on ${port}`));
+
+connect(process.env.DB_URL).then(() => {
+  app.listen(port, () => console.log(`server started on ${port}`));
+}).catch(console.log)
