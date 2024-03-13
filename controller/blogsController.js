@@ -31,14 +31,10 @@ export async function createBlogController(req, res) {
     subTitle: Joi.string()
   })
 
-  const userSchema = Joi.object({
-    user: Joi.object({ email: Joi.string().email().required() })
-  })
-
   const { error, value, warning } = schema.validate(req.body)
   if (error)
     return res.status(400).json(error)
-  if (warning) res.status(400).json(warning)
+  if (warning) return res.status(400).json(warning)
 
   try {
     if (!(req.user.email === process.env.ADMIN_EMAIL))
@@ -111,10 +107,10 @@ export async function updateBlogController(req, res) {
     if (image) updates.image = image;
     const blog = await Blog.findByIdAndUpdate(req.params.id, updates);
     res.send(blog);
-    
+
   } catch (error) {
     res.status(500).json({ error })
-    
+
   }
 }
 
